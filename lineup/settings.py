@@ -84,4 +84,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+WECHAT_TOKEN='13rsAefsafFaw53weErasf43wr'
+
 
