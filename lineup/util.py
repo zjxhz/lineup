@@ -5,11 +5,11 @@ import httplib
 import json
 import urllib
 import urllib2
-from xml.etree.ElementTree import fromstring, SubElement, dump
+from xml.etree.ElementTree import fromstring, SubElement, dump, Element, \
+    tostring
 import xml.etree.ElementTree
 
 from django.conf import settings
-from django.test.html import Element
 import requests
 
 from lineup.menu import Menu
@@ -38,7 +38,7 @@ class RequestHandler(object):
         self.fromuser = root.find('FromUserName').text
         eventkey = root.find('EventKey').text
         if eventkey:
-            return self.handel_event(root)
+            return self.handel_event(eventkey)
             
     def handel_event(self, event_key):
         
@@ -54,12 +54,12 @@ class RequestHandler(object):
         touser = SubElement(xml, 'ToUserName')
         touser.text = self.fromuser
         createtime = SubElement(xml, 'CreateTime')
-        createtime.text = (datetime.now() - datetime(1970, 1, 1)).total_seconds()
+        createtime.text = str(int((datetime.now() - datetime(1970, 1, 1)).total_seconds()))
         msgtype = SubElement(xml, 'MsgType')
         msgtype.text = 'text'
         content = SubElement(xml, 'Content')
         content.text = content
-        return dump(xml)
+        return tostring(xml)
     
 def http_get(path):
     path='%s%s' % (settings.WECHAT_API_PATH, path)
