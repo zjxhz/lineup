@@ -4,8 +4,7 @@ import urllib2
 
 from django.conf import settings
 
-from lineup.util import http_post
-from util import fetch_access_token
+from lineup.util import *
 
 
 class Menu(object):

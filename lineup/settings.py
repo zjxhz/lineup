@@ -91,4 +91,26 @@ WECHAT_APP_SECRET='14df0b037abe45f2129dd4052b47fa83'
 WECHAT_ACCESS_TOKEN=None # needs to be fetched from wechat server later 
 WECHAT_ACCESS_TOKEN_TIMESTAMP=None
 
+LOGGING = {
+    'version': 1,
+#     'disable_existing_loggers': True,
+    'formatters': {
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'console':{
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+    },
+    'loggers': {
+        'lineup.views': {
+            'handlers': ['console',],
+            'level': 'DEBUG',
+        }
+    }
+}
 
