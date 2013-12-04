@@ -95,6 +95,7 @@ def current_tickets():
 
 def reset_tickets():
     Ticket.objects.all().delete()
+    global current_ticket_no
     current_ticket_no = 1
     
 admin.site.register(User)
