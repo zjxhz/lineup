@@ -1,7 +1,12 @@
 # coding=utf-8
 import json
 import urllib2
+
 from django.conf import settings
+
+from lineup.util import http_post
+from util import fetch_access_token
+
 
 class Menu(object):
     KEY_CURRENT_TICKETS = "KEY_CURRENT_TICKETS"
@@ -42,14 +47,11 @@ class Menu(object):
                 },       ]
            }]
         }
-        return json.dumps(menu)
+        return menu
 
-
+temp='中文'
 def push_menu():
+    fetch_access_token()
     menu = Menu()
-    menu_str = menu.get_menu()
-    path=' https://api.weixin.qq.com/cgi-bin/menu/create?access_token=%s' % settings.WECHAT_TOKEN   #the url you want to POST to
-    req=urllib2.Request(path)
-    req.add_header('Content-Type', 'application/json')
-    page=urllib2.urlopen(req, menu_str).read()
-    print page
+#     menu_str = json.dumps(menu.get_menu(), ensure_ascii=False)
+    http_post('menu/create?access_token=%s' % settings.WECHAT_ACCESS_TOKEN, menu.get_menu())
