@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.http.response import HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 
-from lineup.util import RequestHandler, check_signature
+from lineup.util import RequestHandler, check_signature, http_post
 
 
 # Get an instance of a logger
@@ -24,4 +24,5 @@ def wechat(request):
         logger.info("post body: %s" % body)
         handler = RequestHandler()
         result = handler.handle(body)
+        http_post('message/custom/send', result)
         return HttpResponse(result)

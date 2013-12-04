@@ -3,6 +3,7 @@ from datetime import datetime
 import hashlib
 import httplib
 import json
+import logging
 import urllib
 import urllib2
 from xml.etree.ElementTree import fromstring, SubElement, dump, Element, \
@@ -16,6 +17,8 @@ from lineup.menu import Menu
 from lineup.models import current_tickets
 
 
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 def check_signature(data):
     try:
         return True
@@ -69,8 +72,10 @@ def http_get(path):
     return page
 
 def http_post(path, data):
-    path='%s%s' % (settings.WECHAT_API_PATH, path)
-    r = requests.post(path, json.dumps(data, ensure_ascii=False))
+    fetch_access_token()
+    path='%s%s?access_token%s' % (settings.WECHAT_API_PATH, path, settings.WECHAT_ACCESS_TOKEN_TIMESTAMP)
+    logging.debug("posting to %s with data:\n%s" % (path, data))
+    r = requests.post(path, data)
     print r.text
     return r.text
     

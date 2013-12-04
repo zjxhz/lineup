@@ -107,7 +107,7 @@ LOGGING = {
         },
     },
     'loggers': {
-        'lineup.views': {
+        'lineup': {
             'handlers': ['console',],
             'level': 'DEBUG',
         }
