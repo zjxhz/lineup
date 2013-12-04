@@ -26,3 +26,11 @@ def wechat(request):
         result = handler.handle(body)
         http_post('message/custom/send', result)
         return HttpResponse(result)
+
+@csrf_exempt
+def test(request):
+    if request.method == 'GET':
+        print request.GET
+    if request.method == 'POST':
+        print request.body
+    return HttpResponse('OK')
