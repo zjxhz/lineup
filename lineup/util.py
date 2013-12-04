@@ -51,18 +51,20 @@ class RequestHandler(object):
         return self.response("unknown command")
     
     def response(self, content):
-        xml = Element('xml')
-        fromuser = SubElement(xml, 'FromUserName')
-        fromuser.text = self.devid
-        touser = SubElement(xml, 'ToUserName')
-        touser.text = self.fromuser
-        createtime = SubElement(xml, 'CreateTime')
-        createtime.text = str(int((datetime.now() - datetime(1970, 1, 1)).total_seconds()))
-        msgtype = SubElement(xml, 'MsgType')
-        msgtype.text = 'text'
-        content = SubElement(xml, 'Content')
-        content.text = content
-        return tostring(xml)
+        result = {"touser":self.fromuser, "msgtype":"text", "text":{"content":content}}
+        return json.dumps(result)
+#         xml = Element('xml')
+#         fromuser = SubElement(xml, 'FromUserName')
+#         fromuser.text = self.devid
+#         touser = SubElement(xml, 'ToUserName')
+#         touser.text = self.fromuser
+#         createtime = SubElement(xml, 'CreateTime')
+#         createtime.text = str(int((datetime.now() - datetime(1970, 1, 1)).total_seconds()))
+#         msgtype = SubElement(xml, 'MsgType')
+#         msgtype.text = 'text'
+#         content = SubElement(xml, 'Content')
+#         content.text = content
+#         return tostring(xml)
     
 def http_get(path):
     path='%s%s' % (settings.WECHAT_API_PATH, path)
