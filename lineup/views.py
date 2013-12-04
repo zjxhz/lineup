@@ -2,6 +2,7 @@ import logging
 
 from django.http import HttpResponse
 from django.http.response import HttpResponseForbidden
+from django.views.decorators.csrf import csrf_exempt
 
 from lineup.util import RequestHandler, check_signature
 
@@ -9,6 +10,7 @@ from lineup.util import RequestHandler, check_signature
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
+@csrf_exempt
 def wechat(request):
     if request.method == 'GET':
         logger.info("get request: %s" % request.GET)
