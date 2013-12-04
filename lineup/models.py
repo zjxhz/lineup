@@ -76,7 +76,7 @@ class User(AbstractUser):
     def where(self):
         ticket = self.ticket()
         if ticket: 
-            earlier_tickets = Ticket.objects.filter(ticket_no__lt = ticket.ticket_no)
+            earlier_tickets = Ticket.objects.filter(ticket_no__lt = ticket.ticket_no).filter(line=ticket.line)
             return u'您前面还有%d人' % earlier_tickets.count()
         return u'您还没有开始排队'
         
