@@ -1,22 +1,17 @@
 
 # coding=utf-8
 from datetime import datetime
-import hashlib
-import httplib
 import json
 import logging
-import urllib
 import urllib2
-from xml.etree.ElementTree import fromstring, SubElement, dump, Element, \
-    tostring
-import xml.etree.ElementTree
+from xml.etree.ElementTree import fromstring
 
 from django.conf import settings
 import requests
 
 from lineup.exceptions import AlreadyJoinedException
 from lineup.menu import Menu
-from lineup.models import current_tickets, TableType, User
+from lineup.models import current_tickets, TableType, User, reset_tickets
 
 
 # Get an instance of a logger
@@ -56,9 +51,24 @@ class RequestHandler(object):
             return self.hanlde_wait_request(TableType.Eight)
         if event_key == Menu.KEY_WAIT_FOR_TABLE_VIP:
             return self.hanlde_wait_request(TableType.Vip)
+        if event_key == Menu.KEY_CANCEL_MY_TICKET:
+            return self.handle_cancel_ticket()
+        if event_key == Menu.KEY_RESET_TICKETS:
+            return self.handle_reset_tickets()
+        
         return self.response("unknown command")
     
     def hanlde_wait_request(self, table_type):
+        user = self.get_user()
+        try:
+            ticket_no_info = user.wait_for_table(table_type)
+            return self.response(u'%s，%s' % (ticket_no_info,user.where()) )
+        except AlreadyJoinedException as e:
+            return self.response(unicode(e))
+        except Exception as e:
+            return self.response(u'发生未知错误')
+    
+    def get_user(self):
         user = User.objects.filter(open_id = self.fromuser)
         if not user:
             user = User.objects.create_user(self.fromuser)
@@ -67,14 +77,15 @@ class RequestHandler(object):
             user.save()
         else:
             user = user[0]
-        try:
-            user.wait_for_table(table_type)
-            return self.response(user.where() )
-        except AlreadyJoinedException as e:
-            return self.response(unicode(e))
-        except Exception as e:
-            return self.response(u'发生未知错误')
-        
+        return user
+    
+    def handle_cancel_ticket(self):
+        return self.response(self.get_user().cancel_ticket())
+    
+    def handle_reset_tickets(self):
+        reset_tickets()
+        return self.response(u'所有排队信息已经清空')
+    
     def response(self, content):
         result = {"touser":self.fromuser, "msgtype":"text", "text":{"content":content}}
         return json.dumps(result,ensure_ascii=False)

@@ -58,11 +58,15 @@ class User(AbstractUser):
         ticket = Ticket(ticket_no=current_ticket_no, user=self, line=line)
         current_ticket_no += 1
         ticket.save()
+        return u'您的排队号是「%d」' % ticket.ticket_no
 
     def cancel_ticket(self):
         ticket = self.ticket()
         if ticket:
             ticket.delete()
+            return u'已取消排队'
+        else:
+            return u'您还未开始排队'
 
     def ticket(self):
         tickets = Ticket.objects.filter(user=self)

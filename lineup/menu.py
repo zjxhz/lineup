@@ -1,18 +1,12 @@
 # coding=utf-8
-import json
-import urllib2
-
-from django.conf import settings
-
-from lineup.util import *
-
-
 class Menu(object):
     KEY_CURRENT_TICKETS = "KEY_CURRENT_TICKETS"
     KEY_WAIT_FOR_TABLE_TWO = "KEY_WAIT_FOR_TABLE_TWO"
     KEY_WAIT_FOR_TABLE_FOUR = "KEY_WAIT_FOR_TABLE_FOUR"
     KEY_WAIT_FOR_TABLE_EIGHT = "KEY_WAIT_FOR_TABLE_EIGHT"
     KEY_WAIT_FOR_TABLE_VIP = "KEY_WAIT_FOR_TABLE_VIP"
+    KEY_CANCEL_MY_TICKET = "KEY_CANCEL_MY_TICKET"
+    KEY_RESET_TICKETS = "KEY_RESET_TICKETS"
     def get_menu(self):
         menu = {
          "button":[
@@ -44,13 +38,21 @@ class Menu(object):
                    "name":u"包厢",
                    "key": self.KEY_WAIT_FOR_TABLE_VIP,
                 },       ]
-           }]
+           },
+           {
+                "name": u"其他", 
+                "sub_button": [
+                {
+                    "type": "click", 
+                    "name": u"取消排队", 
+                    "key": self.KEY_CANCEL_MY_TICKET,
+                }, 
+                {
+                    "type": "click", 
+                    "name": u"清空所有队伍", 
+                    "key": self.KEY_RESET_TICKETS,
+                }, 
+            ]
+        }]
         }
         return menu
-
-temp='中文'
-def push_menu():
-    fetch_access_token()
-    menu = Menu()
-#     menu_str = json.dumps(menu.get_menu(), ensure_ascii=False)
-    http_post('menu/create?access_token=%s' % settings.WECHAT_ACCESS_TOKEN, menu.get_menu())
