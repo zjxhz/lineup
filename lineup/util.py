@@ -73,7 +73,7 @@ def http_get(path):
 
 def http_post(path, data):
     fetch_access_token()
-    path='%s%s?access_token%s' % (settings.WECHAT_API_PATH, path, settings.WECHAT_ACCESS_TOKEN_TIMESTAMP)
+    path='%s%s?access_token=%s' % (settings.WECHAT_API_PATH, path, settings.WECHAT_ACCESS_TOKEN)
     logging.debug("posting to %s with data:\n%s" % (path, data))
     r = requests.post(path, data)
     print r.text
