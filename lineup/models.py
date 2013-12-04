@@ -46,7 +46,7 @@ class Ticket(models.Model):
                 
 class User(AbstractUser):
     name = models.CharField(u'昵称', max_length=30, null=True, blank=False)
-#    openID = models.CharField(u'OpenID', max_length=128, )
+    open_id = models.CharField(u'OpenID', max_length=128, null=True, blank=True )
     tickets = models.ManyToManyField(Line, null=True, related_name="users", through=Ticket)
     
     def wait_for_table(self, table_type):

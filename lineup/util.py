@@ -1,4 +1,5 @@
 
+# coding=utf-8
 from datetime import datetime
 import hashlib
 import httplib
@@ -13,8 +14,9 @@ import xml.etree.ElementTree
 from django.conf import settings
 import requests
 
+from lineup.exceptions import AlreadyJoinedException
 from lineup.menu import Menu
-from lineup.models import current_tickets
+from lineup.models import current_tickets, TableType, User
 
 
 # Get an instance of a logger
@@ -44,12 +46,35 @@ class RequestHandler(object):
             return self.handel_event(eventkey)
             
     def handel_event(self, event_key):
-        
         if event_key == Menu.KEY_CURRENT_TICKETS:
             return self.response(current_tickets())
-
+        if event_key == Menu.KEY_WAIT_FOR_TABLE_TWO:
+            return self.hanlde_wait_request(TableType.Two)
+        if event_key == Menu.KEY_WAIT_FOR_TABLE_FOUR:
+            return self.hanlde_wait_request(TableType.Four)
+        if event_key == Menu.KEY_WAIT_FOR_TABLE_EIGHT:
+            return self.hanlde_wait_request(TableType.Eight)
+        if event_key == Menu.KEY_WAIT_FOR_TABLE_VIP:
+            return self.hanlde_wait_request(TableType.Vip)
         return self.response("unknown command")
     
+    def hanlde_wait_request(self, table_type):
+        user = User.objects.filter(open_id = self.fromuser)
+        if not user:
+            user = User.objects.create_user(self.fromuser)
+            user.open_id = self.fromuser
+            user.name = self.fromuser
+            user.save()
+        else:
+            user = user[0]
+        try:
+            user.wait_for_table(table_type)
+            return self.response(user.where() )
+        except AlreadyJoinedException as e:
+            return self.response(unicode(e))
+        except Exception as e:
+            return self.response(u'发生未知错误')
+        
     def response(self, content):
         result = {"touser":self.fromuser, "msgtype":"text", "text":{"content":content}}
         return json.dumps(result,ensure_ascii=False)
