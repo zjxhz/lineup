@@ -52,19 +52,7 @@ class RequestHandler(object):
     
     def response(self, content):
         result = {"touser":self.fromuser, "msgtype":"text", "text":{"content":content}}
-        return json.dumps(result)
-#         xml = Element('xml')
-#         fromuser = SubElement(xml, 'FromUserName')
-#         fromuser.text = self.devid
-#         touser = SubElement(xml, 'ToUserName')
-#         touser.text = self.fromuser
-#         createtime = SubElement(xml, 'CreateTime')
-#         createtime.text = str(int((datetime.now() - datetime(1970, 1, 1)).total_seconds()))
-#         msgtype = SubElement(xml, 'MsgType')
-#         msgtype.text = 'text'
-#         content = SubElement(xml, 'Content')
-#         content.text = content
-#         return tostring(xml)
+        return json.dumps(result,ensure_ascii=False)
     
 def http_get(path):
     path='%s%s' % (settings.WECHAT_API_PATH, path)
@@ -76,8 +64,8 @@ def http_get(path):
 def http_post(path, data):
     fetch_access_token()
     path='%s%s?access_token=%s' % (settings.WECHAT_API_PATH, path, settings.WECHAT_ACCESS_TOKEN)
-    logger.debug("posting to %s with data:\n%s" % (path, data))
-    r = requests.post(path, data)
+    logger.debug(u"posting to %s with data:\n%s" % (path, data))
+    r = requests.post(path, data=data.encode('utf-8'), headers={'content-type': 'application/json; charset=utf-8', })
     print r.text
     return r.text
     
