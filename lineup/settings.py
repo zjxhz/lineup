@@ -86,8 +86,8 @@ STATIC_URL = '/static/'
 
 WECHAT_TOKEN='13rsAefsafFaw53weErasf43wr'
 WECHAT_API_PATH='https://api.weixin.qq.com/cgi-bin/'
-WECHAT_APP_ID='wx66eb9a45a046bc66'
-WECHAT_APP_SECRET='14df0b037abe45f2129dd4052b47fa83'
+WECHAT_APP_ID='wxa8dd15a95038e4e9'#'wx66eb9a45a046bc66'
+WECHAT_APP_SECRET='2a203e4d834f10e5dba4c320b5571c61' # '14df0b037abe45f2129dd4052b47fa83'
 WECHAT_ACCESS_TOKEN=None # needs to be fetched from wechat server later 
 WECHAT_ACCESS_TOKEN_TIMESTAMP=None
 
