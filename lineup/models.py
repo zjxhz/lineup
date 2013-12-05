@@ -13,8 +13,6 @@ from django.db import models
 
 from lineup.exceptions import AlreadyJoinedException
 
-current_ticket_no = 1
-
 class TableType():
     Two = 1
     Four = 2
@@ -34,8 +32,14 @@ class Line(models.Model):
     def __unicode__(self):
         return TABLE_TYPES[self.table_type - 1][1]
 
+def next_ticket_no():
+    tickets = Ticket.objects.all().order_by('-ticket_no')
+    if tickets:
+        return tickets[0].ticket_no + 1
+    return 1
+        
 class Ticket(models.Model):
-    ticket_no = models.IntegerField()
+    ticket_no = models.IntegerField(default=next_ticket_no)
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     line = models.ForeignKey(Line)
     time = models.DateTimeField(default=datetime.now())
@@ -53,10 +57,8 @@ class User(AbstractUser):
         if self.tickets.count() > 0:
             # TODO 指出已经排了哪个队，以及是否支持重新排队？
             raise AlreadyJoinedException(u'对不起，您已经在排队，一个小时内不能重复排队')
-        global current_ticket_no
         line = Line.objects.get_or_create(table_type=table_type)[0]
-        ticket = Ticket(ticket_no=current_ticket_no, user=self, line=line)
-        current_ticket_no += 1
+        ticket = Ticket(user=self, line=line)
         ticket.save()
         return u'您的排队号是「%d」' % ticket.ticket_no
 
@@ -95,7 +97,6 @@ def current_tickets():
 
 def reset_tickets():
     Ticket.objects.all().delete()
-    global current_ticket_no
-    current_ticket_no = 1
+    
     
 admin.site.register(User)
