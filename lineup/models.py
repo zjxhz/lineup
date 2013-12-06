@@ -28,7 +28,14 @@ TABLE_TYPES = (
 
 class Line(models.Model):
     table_type = models.SmallIntegerField(u'桌子', null=True, blank=True, choices=TABLE_TYPES)
-    
+
+    def next_user_no(self):
+        ticket = Ticket.objects.filter(line=self)[:1]
+        if ticket:
+            return ticket[0].ticket_no
+        else:
+            return '--'
+
     def __unicode__(self):
         return TABLE_TYPES[self.table_type - 1][1]
 
@@ -40,7 +47,7 @@ def next_ticket_no():
         
 class Ticket(models.Model):
     ticket_no = models.IntegerField(default=next_ticket_no)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
     line = models.ForeignKey(Line)
     time = models.DateTimeField(default=datetime.now())
     
@@ -100,3 +107,5 @@ def reset_tickets():
     
     
 admin.site.register(User)
+admin.site.register(Line)
+admin.site.register(Ticket)

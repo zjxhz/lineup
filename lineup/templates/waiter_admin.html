@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台管理</title>
+    <style type="text/css">
+        #main-wrap{
+            width:300px;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+<div id="main-wrap">
+    <table>
+        {% for line in lines %}
+            <tr>
+                <td><span>{{ line }}</span></td>
+                <td>
+                    <button class="btn-next-avaliable" data-url="{% url 'next_abaliable' line.id %}">
+                        下一位 {{ line.next_user_no }}号
+                    </button>
+                </td>
+                <td>
+                    <button class="btn-get-next-no" data-url="{% url 'get_next_no' line.id %}">取号</button>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+<script type="text/javascript" src="{% static 'js/jquery_1.7.2.js' %}"></script>
+<script>
+    $(function () {
+        $(".btn-next-avaliable").click(function () {
+            var $btn = $(this)
+            $.post($btn.data('url'), function (result) {
+                $btn.text('下一位 ' + result + '号')
+            })
+            return false
+        })
+
+        $(".btn-get-next-no").click(function () {
+            var $btn = $(this)
+            $.post($btn.data('url'), function (result) {
+                var $btnNextAvaliable = $btn.parent("td").prev().find(".btn-next-avaliable")
+                if($btnNextAvaliable.text() == '下一位 --号'){
+                    $btnNextAvaliable.text('下一位 ' + result + '号')
+                }
+
+                alert('等待号：' + result )
+
+            })
+            return false
+        })
+    })
+</script>
+</body>
+</html>
