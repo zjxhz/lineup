@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>后台管理</title>
     <style type="text/css">
-        #main-wrap{
-            width:300px;
+        #main-wrap {
+            width: 300px;
             margin: auto;
         }
     </style>
@@ -45,11 +45,11 @@
             var $btn = $(this)
             $.post($btn.data('url'), function (result) {
                 var $btnNextAvaliable = $btn.parent("td").prev().find(".btn-next-avaliable")
-                if($btnNextAvaliable.text() == '下一位 --号'){
+                if ($btnNextAvaliable.text().indexOf('--')>0) {
                     $btnNextAvaliable.text('下一位 ' + result + '号')
                 }
 
-                alert('等待号：' + result )
+                alert('等待号：' + result)
 
             })
             return false
