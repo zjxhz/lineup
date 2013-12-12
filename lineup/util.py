@@ -94,7 +94,6 @@ def http_get(path):
     path='%s%s' % (settings.WECHAT_API_PATH, path)
     req=urllib2.Request(path)
     page=urllib2.urlopen(req).read()
-    print page
     return page
 
 def http_post(path, data):
@@ -102,7 +101,6 @@ def http_post(path, data):
     path='%s%s?access_token=%s' % (settings.WECHAT_API_PATH, path, settings.WECHAT_ACCESS_TOKEN)
     logger.debug(u"posting to %s with data:\n%s" % (path, data))
     r = requests.post(path, data=data.encode('utf-8'), headers={'content-type': 'application/json; charset=utf-8', })
-    print r.text
     return r.text
     
     
@@ -111,8 +109,10 @@ def fetch_access_token():
     diff = 0
     if settings.WECHAT_ACCESS_TOKEN_TIMESTAMP:
         diff = (now - settings.WECHAT_ACCESS_TOKEN_TIMESTAMP).total_seconds()
+        logger.debug("token age: %.0f" % diff)
     if not settings.WECHAT_ACCESS_TOKEN or diff > 3600:
         response =  http_get("token?grant_type=client_credential&appid=%s&secret=%s" % (settings.WECHAT_APP_ID, settings.WECHAT_APP_SECRET))
         dic = json.loads(response)
         settings.WECHAT_ACCESS_TOKEN = dic['access_token']
-        print 'setting access token to ', settings.WECHAT_ACCESS_TOKEN 
+        settings.WECHAT_ACCESS_TOKEN_TIMESTAMP = now
+        logger.debug('setting access token to ', settings.WECHAT_ACCESS_TOKEN) 
