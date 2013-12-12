@@ -104,12 +104,15 @@ WECHAT_APP_SECRET='2a203e4d834f10e5dba4c320b5571c61' # '14df0b037abe45f2129dd405
 WECHAT_ACCESS_TOKEN=None # needs to be fetched from wechat server later 
 WECHAT_ACCESS_TOKEN_TIMESTAMP=None
 
+from os.path import expanduser
+SITE_ROOT= expanduser("~")
+LOGGING_ROOT = SITE_ROOT + "/logs/user/"
 LOGGING = {
     'version': 1,
 #     'disable_existing_loggers': True,
     'formatters': {
         'simple': {
-            'format': '%(levelname)s %(message)s'
+            'format': '%(asctime)s %(levelname)s %(message)s'
         },
     },
     'handlers': {
@@ -118,10 +121,18 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(LOGGING_ROOT, 'lineup.log'),
+            'maxBytes': 1024 * 1024 * 2, # 5 MB
+            'backupCount': 7,
+            'formatter': 'simple',
+        },
     },
     'loggers': {
         'lineup': {
-            'handlers': ['console',],
+            'handlers': ['console', 'file'],
             'level': 'DEBUG',
         }
     }
