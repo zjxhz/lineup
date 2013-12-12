@@ -115,4 +115,4 @@ def fetch_access_token():
         dic = json.loads(response)
         settings.WECHAT_ACCESS_TOKEN = dic['access_token']
         settings.WECHAT_ACCESS_TOKEN_TIMESTAMP = now
-        logger.debug('setting access token to ', settings.WECHAT_ACCESS_TOKEN) 
+        logger.debug('setting access token to %s' % settings.WECHAT_ACCESS_TOKEN) 
